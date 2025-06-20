@@ -106,7 +106,7 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
         // Generate GS1 DataMatrix using EXACT value
         bwipjs.toCanvas(gs1Canvas, {
           bcid: "datamatrix",
-          text: barcodeData.gs1Value, // EXACT value from database
+          text: barcodeData.gs1Value,
           scale: 3,
           height: 20,
           width: 20,
@@ -118,7 +118,7 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
         // Generate Code128 using EXACT linear value
         bwipjs.toCanvas(code128Canvas, {
           bcid: "code128",
-          text: barcodeData.linearValue, // EXACT linear value from database
+          text: barcodeData.linearValue,
           scale: 3,
           height: 10,
           includetext: false,
@@ -140,24 +140,34 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
     }
   }, [barcodeData, hasError, isLoadingBarcode])
 
-
   const handleDownloadPDF = async () => {
     if (labelRef.current) {
       try {
-        // Create a hidden container for clean rendering
         const hiddenContainer = document.createElement("div")
         hiddenContainer.style.position = "absolute"
         hiddenContainer.style.left = "-9999px"
         hiddenContainer.style.top = "0"
         hiddenContainer.style.width = "640px"
+        hiddenContainer.style.padding = "0"
+        hiddenContainer.style.margin = "0"
         hiddenContainer.style.backgroundColor = "#ffffff"
         document.body.appendChild(hiddenContainer)
 
-        // Clone the label content into the hidden container
         const clonedLabel = labelRef.current.cloneNode(true) as HTMLElement
         clonedLabel.style.transform = "scale(1)"
-        clonedLabel.style.boxShadow = "none" // Remove shadow to prevent rendering issues
-        clonedLabel.classList.remove("animate-slide-up") // Remove animation
+        clonedLabel.style.boxShadow = "none"
+        clonedLabel.style.margin = "0"
+        clonedLabel.style.padding = "0"
+        clonedLabel.style.border = "none"
+        clonedLabel.classList.remove("animate-slide-up")
+
+        // Reset styles for all child elements
+        clonedLabel.querySelectorAll("*").forEach((el: HTMLElement) => {
+          el.style.margin = "0"
+          el.style.padding = "0"
+          el.style.border = "none"
+        })
+
         const gs1Img = clonedLabel.querySelector(".datamatrix-code") as HTMLImageElement
         if (gs1Img && gs1DataMatrixUrl) {
           gs1Img.src = gs1DataMatrixUrl
@@ -167,21 +177,18 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
           code128Img.src = code128Url
         }
 
-        // Ensure the header background is set
         const header = clonedLabel.querySelector(".express-header") as HTMLElement
         if (header) {
           header.style.backgroundColor = "#FAD022"
         }
 
-        // Adjust the Express Post text position
         const expressText = clonedLabel.querySelector(".express-header > div:last-child") as HTMLElement
         if (expressText) {
-          expressText.style.paddingBottom = "1.8rem" // Move text up slightly
+          expressText.style.paddingBottom = "1.8rem"
         }
 
         hiddenContainer.appendChild(clonedLabel)
 
-        // Capture the cloned label
         const canvas = await html2canvas(clonedLabel, {
           scale: 2,
           useCORS: true,
@@ -191,37 +198,17 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
           logging: false,
         })
 
-        // Clean up the hidden container
         document.body.removeChild(hiddenContainer)
 
-        // Create PDF
         const pdf = new jsPDF({
           orientation: "portrait",
           unit: "px",
-          format: "a4",
+          format: [canvas.width / 2, canvas.height / 2],
         })
 
         const imgData = canvas.toDataURL("image/png")
-        const imgWidth = canvas.width
-        const imgHeight = canvas.height
-        const pdfWidth = pdf.internal.pageSize.getWidth()
-        const pdfHeight = pdf.internal.pageSize.getHeight()
+        pdf.addImage(imgData, "PNG", 0, 0, pdf.internal.pageSize.getWidth(), pdf.internal.pageSize.getHeight())
 
-        // Calculate scaling to fit the label within A4
-        const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight)
-        const scaledWidth = imgWidth * ratio
-        const scaledHeight = imgHeight * ratio
-        const xOffset = (pdfWidth - scaledWidth) / 2
-        const yOffset = (pdfHeight - scaledHeight) / 2
-
-        // Set PDF background to white
-        pdf.setFillColor(255, 255, 255)
-        pdf.rect(0, 0, pdfWidth, pdfHeight, "F")
-
-        // Add image to PDF
-        pdf.addImage(imgData, "PNG", xOffset, yOffset, scaledWidth, scaledHeight)
-
-        // Download the PDF
         pdf.save(`shipping-label-${labelData.toAddress.fullName.replace(/\s+/g, "-")}.pdf`)
       } catch (error) {
         console.error("Error generating PDF:", error)
@@ -231,19 +218,17 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
     }
   }
 
-  if (isLoadingBarcode) {
-    return (
-      <div className="animate-fade-in">
-        <Card className="shadow-2xl border-0 bg-white dark:bg-slate-800 backdrop-blur-none overflow-hidden">
-          <CardContent className="p-12 text-center">
-            <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4 text-blue-600" />
-            <h3 className="text-xl font-semibold text-slate-700 mb-2">Assigning Barcode</h3>
-            <p className="text-slate-500">Fetching and assigning a unique barcode to your label...</p>
-          </CardContent>
-        </Card>
-      </div>
-    )
-  }
+  if (isLoadingBarcode) return (
+    <div className="animate-fade-in">
+      <Card className="shadow-2xl border-0 bg-white dark:bg-slate-800 backdrop-blur-none overflow-hidden">
+        <CardContent className="p-12 text-center">
+          <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4 text-blue-600" />
+          <h3 className="text-xl font-semibold text-slate-700 mb-2">Assigning Barcode</h3>
+          <p className="text-slate-500">Fetching and assigning a unique barcode to your label...</p>
+        </CardContent>
+      </Card>
+    </div>
+  )
 
   return (
     <div className="animate-fade-in">
@@ -276,7 +261,14 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
             <div
               ref={labelRef}
               className="w-[640px] bg-white rounded-none overflow-hidden shadow-xl animate-slide-up"
-              style={{ fontFamily: "Arial, sans-serif", backgroundColor: "#ffffff" }}
+              style={{
+                fontFamily: "Arial, sans-serif",
+                backgroundColor: "#ffffff",
+                width: "640px",
+                height: "896px",
+                margin: "0",
+                padding: "0",
+              }}
             >
               <div
                 className="express-header"
@@ -284,7 +276,6 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
                   background: "#FAD022",
                   display: "flex",
                   alignItems: "center",
-                  // border: "4px solid #E8DFD2",
                   borderBottom: "none",
                 }}
               >
@@ -322,26 +313,23 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
               </div>
 
               <div className="main-content" style={{ display: "flex", backgroundColor: "#ffffff" }}>
-                <div style={{ flex: 1,paddingTop:'6px' }}>
+                <div style={{ flex: 1, paddingTop: "6px" }}>
                   <div>
                     <div
                       style={{
                         padding: "2px 8px",
-                        height:'200px',
+                        height: "200px",
                         background: "white",
                         border: "4px solid #E8DFD2",
                         borderBottom: "none",
                       }}
                     >
-                    <div style={{ fontSize: "22px", fontFamily: "Arial, sans-serif" ,lineHeight: 1.2 }}>
-                      
-  To:   <br />
- {labelData.toAddress.fullName}
-  <br />
-  {labelData.toAddress.street}
-  <br />
-  {labelData.toAddress.cityStatePostcode}
-</div>
+                      <div style={{ fontSize: "22px", fontFamily: "Arial, sans-serif", lineHeight: 1.2 }}>
+                        To: <br />
+                        {labelData.toAddress.fullName} <br />
+                        {labelData.toAddress.street} <br />
+                        {labelData.toAddress.cityStatePostcode}
+                      </div>
                     </div>
                   </div>
 
@@ -349,8 +337,8 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
                     style={{
                       display: "flex",
                       border: "4px solid #E8DFD2",
-                      borderBottom: "none"
-                      ,lineHeight: 1.2
+                      borderBottom: "none",
+                      lineHeight: 1.2,
                     }}
                   >
                     <div
@@ -358,8 +346,8 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
                         flex: 1,
                         padding: "6px",
                         textAlign: "center",
-                        borderRight: "4px solid #E8DFD2"
-                        ,lineHeight: 1.2
+                        borderRight: "4px solid #E8DFD2",
+                        lineHeight: 1.2,
                       }}
                     >
                       <div style={{ fontSize: "18px", color: "#666", marginBottom: "4px" }}>Packaging</div>
@@ -376,13 +364,13 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
                       }}
                     >
                       <div style={{ fontSize: "16px", color: "#666", marginBottom: "4px" }}>Physical weight</div>
-                      <div style={{ fontSize: "32px", marginBottom: "8px" ,lineHeight: 1.2 }} className={Stratum.className}>
+                      <div style={{ fontSize: "32px", marginBottom: "8px", lineHeight: 1.2 }} className={Stratum.className}>
                         {labelData.weight || "5kg"}
                       </div>
                       <div style={{ fontSize: "16px", color: "#666", marginBottom: "4px" }}>Cubic weight</div>
-                      <div style={{ fontSize: "26px",marginBottom: "4px", }}>N/A</div>
+                      <div style={{ fontSize: "26px", marginBottom: "4px" }}>N/A</div>
                     </div>
-                    <div style={{ flex: 1, padding: "6px 0", textAlign: "center" ,lineHeight: 1.2 }}>
+                    <div style={{ flex: 1, padding: "6px 0", textAlign: "center", lineHeight: 1.2 }}>
                       <div style={{ fontSize: "16px", color: "#666", marginBottom: "4px" }}>Delivery features</div>
                       <div style={{ fontSize: "26px" }}>-</div>
                     </div>
@@ -393,10 +381,9 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
                       padding: "8px",
                       border: "4px solid #E8DFD2",
                       borderBottom: "none",
-
                     }}
                   >
-                    <div style={{ fontSize: "20px", marginBottom: "4px",fontWeight: "600" }} className={Stratum.className}>
+                    <div style={{ fontSize: "20px", marginBottom: "4px", fontWeight: "600" }} className={Stratum.className}>
                       Ph: {labelData.phone || "N/A"}
                     </div>
                   </div>
@@ -408,7 +395,7 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
                       marginBottom: "16px",
                     }}
                   >
-                    <div style={{ fontSize: "20px",fontWeight: "600" }} className={Stratum.className}>
+                    <div style={{ fontSize: "20px", fontWeight: "600" }} className={Stratum.className}>
                       Ref: {labelData.reference || "N/A"}
                     </div>
                   </div>
@@ -416,31 +403,27 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
                   <div>
                     <div
                       style={{
-                        height:"130px",
+                        height: "130px",
                         padding: "4px 8px",
                         background: "white",
                         border: "4px solid #E8DFD2",
                       }}
                     >
-                      <div style={{ fontSize: "24px"                        ,lineHeight: 1.2
- }}>Sender:</div>
-                      <div style={{ fontSize: "18px", fontFamily: "Arial, sans-serif"                         ,lineHeight: 1.2
- }}>
+                      <div style={{ fontSize: "24px", lineHeight: 1.2 }}>Sender:</div>
+                      <div style={{ fontSize: "18px", fontFamily: "Arial, sans-serif", lineHeight: 1.2 }}>
                         {labelData.fromAddress.fullName}
                       </div>
-                      <div style={{ fontSize: "18px", fontFamily: "Arial, sans-serif"                         ,lineHeight: 1.2
- }}>
+                      <div style={{ fontSize: "18px", fontFamily: "Arial, sans-serif", lineHeight: 1.2 }}>
                         {labelData.fromAddress.street}
                       </div>
-                      <div style={{ fontSize: "18px", fontFamily: "Arial, sans-serif"                         ,lineHeight: 1.2
- }}>
+                      <div style={{ fontSize: "18px", fontFamily: "Arial, sans-serif", lineHeight: 1.2 }}>
                         {labelData.fromAddress.cityStatePostcode}
                       </div>
                     </div>
                   </div>
 
-                  <div style={{ padding: "8px",paddingTop:'6px', border: "4px solid #E8DFD2" ,height:'170px',lineHeight: 1.2}}>
-                    <div style={{ fontWeight: "bold", fontSize: "16px", }}>
+                  <div style={{ padding: "8px", paddingTop: "6px", border: "4px solid #E8DFD2", height: "170px", lineHeight: 1.2 }}>
+                    <div style={{ fontWeight: "bold", fontSize: "16px" }}>
                       Aviation Security and Dangerous Goods Declaration
                     </div>
                     <div style={{ fontSize: "14px", lineHeight: "1.4", color: "#333" }}>
@@ -482,13 +465,11 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
                       <img
                         src={
                           gs1DataMatrixUrl ||
-                          "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" ||
-                          "/placeholder.svg" ||
-                          "/placeholder.svg"
+                          "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
                         }
                         alt="GS1 DataMatrix"
                         className="datamatrix-code"
-                        style={{ width: "100px", height: "100px", objectFit: "contain" }}
+                        style={{ width: "100px", height: "100px", objectFit: "contain", margin: "0", padding: "0" }}
                       />
                     </div>
                   </div>
@@ -508,7 +489,7 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
                     <div
                       style={{
                         position: "absolute",
-                        right: "-23px",
+                        right: "-22px",
                         top: "14%",
                         transform: "translateY(50%) rotate(90deg)",
                         transformOrigin: "center",
@@ -518,7 +499,7 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
                       }}
                       className={Stratum.className}
                     >
-                      AP Article ID: {barcodeData.linearValue}
+                      AP Article ID: {barcodeData?.linearValue}
                     </div>
                     <img
                       src={
@@ -529,6 +510,8 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
                       style={{
                         height: "520px",
                         display: "block",
+                        margin: "0",
+                        padding: "0",
                       }}
                     />
                   </div>
@@ -539,17 +522,16 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
         </CardContent>
 
         <CardFooter className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-slate-700 dark:to-slate-600 p-6">
-          <div className="flex justify-center space-x-4 w-full">
-            <Button
-              variant="outline"
-              onClick={handleDownloadPDF}
-              className="flex-1 max-w-xs h-12 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white border-0 font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
-              disabled={hasError || isLoadingBarcode}
-            >
-              <Download className="mr-2 h-5 w-5" />
-              Download PDF
-            </Button>
-          </div>
+          {/* <div className="flex justify-center"></div> */}
+          <Button
+            variant="outline"
+            onClick={handleDownloadPDF}
+            className="flex-1 max-w-xs h-12 bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white border-0 font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105"
+            disabled={hasError || isLoadingBarcode}
+          >
+            <Download className="mr-2 h-5 w-5" />
+            Download PDF
+          </Button>
         </CardFooter>
       </Card>
     </div>
