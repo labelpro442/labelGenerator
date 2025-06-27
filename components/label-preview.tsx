@@ -245,6 +245,7 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
                   display: "flex",
                   alignItems: "stretch", // Ensures both boxes are same height
                   borderBottom: "none",
+                  width:'580px'
                 }}
               >
                 {/* 1. Red logo box - no margin needed */}
@@ -416,7 +417,7 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
                       src={code128Url || "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"}
                       alt="Code 128 Barcode"
                       className="linear-barcode"
-                      style={{ height: "520px", display: "block" }}
+                      style={{ height: "520px",width:'100px', display: "block" }}
                     />
                   </div>
                 </div>
