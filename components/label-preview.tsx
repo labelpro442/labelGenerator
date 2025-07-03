@@ -118,9 +118,16 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
         {
           postagePaid.style.marginTop = "-1.2rem"
           postagePaid.style.paddingBottom = "1rem"
+          postagePaid.style.fontWeight = "!important 100"
+          postagePaid.style.color = "#555"
         }
       const toAddressBlock = clonedLabel.querySelector(".pdf-label-to-address") as HTMLElement
-      if (toAddressBlock) toAddressBlock.style.marginTop = "-.7rem"
+      if (toAddressBlock) {
+        toAddressBlock.style.marginTop = "-.7rem"
+        toAddressBlock.style.fontWeight = "350"
+        toAddressBlock.style.fontSize = "18px"
+
+      }
       
       const senderAddressBlock = clonedLabel.querySelector(".pdf-label-sender-address") as HTMLElement
       if (senderAddressBlock) senderAddressBlock.style.marginTop = "-.7rem"
@@ -134,6 +141,8 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
       const phoneLine = clonedLabel.querySelector(".pdf-label-phone") as HTMLElement
       if (phoneLine) {
         phoneLine.style.paddingBottom = ".5rem"
+        phoneLine.style.fontWeight = "200"
+
         phoneLine.style.marginTop = "-.7rem"
       }
 
@@ -141,10 +150,55 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
       if (referenceLine) {
         referenceLine.style.marginTop = "-.7rem"
         referenceLine.style.paddingBottom = ".4rem"
+                referenceLine.style.fontWeight = "200"
+
       }
       
       const pdfLabelWeightSection = clonedLabel.querySelector(".pdf-label-weight-section") as HTMLElement
       if (pdfLabelWeightSection) pdfLabelWeightSection.style.marginTop = "-.5rem"
+      const ownText = clonedLabel.querySelector(".own-text") as HTMLElement
+      if (ownText) {
+        ownText.style.fontWeight = "100"
+        ownText.style.marginTop = "-10px"
+        ownText.style.color = "#444"
+        ownText.style.fontSize = "32px"
+      }
+      const cubicWeightText = clonedLabel.querySelector(".cubic-weight-text") as HTMLElement
+      if (cubicWeightText) {
+        cubicWeightText.style.fontWeight = "100"
+        cubicWeightText.style.marginTop = "-10px"
+        cubicWeightText.style.color = "#444"
+        cubicWeightText.style.fontSize = "32px"
+
+      }
+      const weightText = clonedLabel.querySelector(".weight-text") as HTMLElement
+      if (weightText) {
+        weightText.style.fontWeight = "100"
+        weightText.style.marginTop = "-10px"
+        weightText.style.color = "#444"
+        weightText.style.fontSize = "32px"
+
+      }
+      const sender = clonedLabel.querySelector(".sender") as HTMLElement
+      if (sender) {
+        sender.style.fontWeight = "300"
+     
+
+      }
+      const aviationText = clonedLabel.querySelector(".Aviation-text") as HTMLElement
+      if (sender) {
+        aviationText.style.fontWeight = "100"
+        aviationText.style.fontWeight = "#333"
+     
+
+      }
+      
+     const senderAddressElements = clonedLabel.querySelectorAll(".sender-address-text");
+senderAddressElements.forEach((element) => {
+  element.style.fontWeight = "100";
+  element.style.color = "#333";
+  element.style.fontSize = "15px";
+});
 
       const pdfLabelPackagingSection = clonedLabel.querySelector(".pdf-label-packaging-section") as HTMLElement
       if (pdfLabelPackagingSection) pdfLabelPackagingSection.style.marginTop = "-.5rem"
@@ -153,7 +207,7 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
       if (pdfLabelFeaturesSection) pdfLabelFeaturesSection.style.marginTop = "-.5rem"
       
       const articleIdText = clonedLabel.querySelector(".pdf-label-article-id") as HTMLElement
-      if (articleIdText) articleIdText.style.right = "-12px"
+      if (articleIdText) articleIdText.style.right = "-8px"
       
       const gs1Img = clonedLabel.querySelector(".datamatrix-code") as HTMLImageElement
       if (gs1Img && gs1DataMatrixUrl) gs1Img.src = gs1DataMatrixUrl
@@ -308,7 +362,7 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
                   >
                     <div
                    
-                      style={{ padding: "2px 4px", height: "190px", background: "white", fontSize: "20px", lineHeight: 1.2 }}
+                      style={{ padding: "2px 4px", height: "190px", background: "white", fontSize: "19px", lineHeight: 1.2 ,fontWeight: "350"}}
                     >
                     <div    className="pdf-label-to-address">
                         To: <br />
@@ -323,16 +377,16 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
                   <div style={{ display: "flex", border: "4px solid #E8DFD2", borderBottom: "none", lineHeight: 1.2 }}>
                     <div  style={{ flex: 1, padding: "2px", borderRight: "4px solid #E8DFD2" }}>
                         <div className="pdf-label-packaging-section">
-                             <div style={{ fontSize: "18px", color: "#666", marginBottom: "4px" }}>Packaging</div>
-                      <div style={{ fontSize: "32px", textAlign: "center" }} className={Stratum.className}>OWN</div>
+                             <div style={{ fontSize: "16px", color: "#666", marginBottom: "4px" }}>Packaging</div>
+                      <div style={{ fontSize: "34px", textAlign: "center",fontWeight: "200"  ,color:'#444' }} className={`${Stratum.className} own-text`}>OWN</div>
                         </div>
                     </div>
                     <div  style={{ flex: 1, padding: "2px 0", textAlign: "center", borderRight: "4px solid #E8DFD2" }}>
                       <div className="pdf-label-weight-section">
                         <div style={{ fontSize: "16px", color: "#666", marginBottom: "6px" }}>Physical weight</div>
-                      <div style={{ fontSize: "32px", marginBottom: "4px", lineHeight: 1.2 }} className={Stratum.className}>{labelData.weight || "5kg"}</div>
+                      <div style={{ fontSize: "34px", marginBottom: "4px", lineHeight: 1.2 ,color:'#444' }} className={`${Stratum.className} weight-text`}>{labelData.weight || "5kg"}</div>
                       <div style={{ fontSize: "16px", color: "#666", margin: "8px 0" }}>Cubic weight</div>
-                      <div style={{ fontSize: "26px", marginBottom: "8px" ,marginTop:'-4px'}}>N/A</div>
+                      <div style={{ fontSize: "34px", marginBottom: "8px" ,marginTop:'-4px',fontWeight: "200" ,color:'#444'}} className={`${Stratum.className} cubic-weight-text`}>N/A</div>
                       </div>
                     </div>
                     <div  style={{ flex: 1, padding: "2px 0", textAlign: "center", lineHeight: 1.2 }}>
@@ -361,10 +415,10 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
                   <div className="pdf-label-sender-address-container" style={{ border: "4px solid #E8DFD2" }}>
                     <div  style={{ height: "130px", padding: "4px", background: "white" }}>
                      <div className="pdf-label-sender-address">
-                       <div style={{ fontSize: "20px", lineHeight: 1.2, fontWeight: "550" }}>Sender:</div>
-                      <div style={{ fontSize: "17px", lineHeight: 1.2 }}>{labelData.fromAddress.fullName}</div>
-                      <div style={{ fontSize: "17px", lineHeight: 1.2 }}>{labelData.fromAddress.street}</div>
-                      <div style={{ fontSize: "17px", lineHeight: 1.2 }}>{labelData.fromAddress.cityStatePostcode}</div>
+                       <div style={{ fontSize: "20px", lineHeight: 1.2, fontWeight: "550", }}  className='sender'>Sender:</div>
+                      <div style={{ fontSize: "17px", lineHeight: 1.2 }} className="sender-address-text">{labelData.fromAddress.fullName}</div>
+                      <div style={{ fontSize: "17px", lineHeight: 1.2 }} className="sender-address-text">{labelData.fromAddress.street}</div>
+                      <div style={{ fontSize: "17px", lineHeight: 1.2 }} className="sender-address-text">{labelData.fromAddress.cityStatePostcode}</div>
                      </div>
                     </div>
                   </div>
@@ -376,7 +430,7 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
                   <div                     className="pdf-label-declaration"
 >
                       <div style={{ fontWeight: "bold", fontSize: "14px" }}>Aviation Security and Dangerous Goods Declaration</div>
-                    <div style={{ fontSize: "15px", lineHeight: "1.2", color: "#333", marginTop: "13px", textAlign: "justify" }}>
+                    <div style={{ fontSize: "15px", lineHeight: "1.2", color: "#666", marginTop: "13px", textAlign: "justify" }} className="Aviation-text">
                       The sender acknowledges that this article may be carried by air and will be subject to aviation security and clearing procedures; and the sender declares that the article does not contain any dangerous or prohibited goods, explosive or incendiary devices. A false declaration is a criminal offence.
                     </div>
                   </div>
@@ -386,7 +440,7 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
                 {/* --- RIGHT COLUMN --- */}
                 <div style={{ width: "160px", padding: "16px", display: "flex", flexDirection: "column" }}>
                   <div style={{ textAlign: "center" }}>
-                    <p className="postage-paid" style={{ fontSize: "20px", marginBottom: "8px", marginLeft: "-20px" }}>Postage Paid</p>
+                    <p className="postage-paid" style={{ fontSize: "20px", marginBottom: "8px", fontWeight: "100", marginLeft: "-20px" }}>Postage Paid</p>
                     <div style={{ textAlign: "center", width: "100px", height: "100px", margin: "0 auto" }}>
                       <img
                         src={gs1DataMatrixUrl || "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"}
