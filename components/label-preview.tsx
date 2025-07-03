@@ -118,7 +118,9 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
         {
           postagePaid.style.marginTop = "-1.2rem"
           postagePaid.style.paddingBottom = "1rem"
-          postagePaid.style.fontWeight = "!important 100"
+          postagePaid.style.fontSize = "18px"
+          
+    postagePaid.style.setProperty('font-weight', '100', 'important');
           postagePaid.style.color = "#555"
         }
       const toAddressBlock = clonedLabel.querySelector(".pdf-label-to-address") as HTMLElement
@@ -440,7 +442,7 @@ senderAddressElements.forEach((element) => {
                 {/* --- RIGHT COLUMN --- */}
                 <div style={{ width: "160px", padding: "16px", display: "flex", flexDirection: "column" }}>
                   <div style={{ textAlign: "center" }}>
-                    <p className="postage-paid" style={{ fontSize: "20px", marginBottom: "8px", fontWeight: "100", marginLeft: "-20px" }}>Postage Paid</p>
+                    <div className="postage-paid" style={{ fontSize: "20px", marginBottom: "8px", fontWeight: "100", marginLeft: "-20px" }}>Postage Paid</div>
                     <div style={{ textAlign: "center", width: "100px", height: "100px", margin: "0 auto" }}>
                       <img
                         src={gs1DataMatrixUrl || "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"}
