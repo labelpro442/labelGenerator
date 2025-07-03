@@ -118,10 +118,10 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
         {
           postagePaid.style.marginTop = "-1.2rem"
           postagePaid.style.paddingBottom = "1rem"
-          postagePaid.style.fontSize = "18px"
+          postagePaid.style.fontSize = "17px"
           
-    postagePaid.style.setProperty('font-weight', '100', 'important');
-          postagePaid.style.color = "#555"
+   postagePaid.style.setProperty('font-family', "'Segoe UI Light', 'Helvetica Neue', Arial, sans-serif", 'important');
+        postagePaid.style.setProperty('font-weight', '350', 'important');          postagePaid.style.color = "#555"
         }
       const toAddressBlock = clonedLabel.querySelector(".pdf-label-to-address") as HTMLElement
       if (toAddressBlock) {
