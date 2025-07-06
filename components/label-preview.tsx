@@ -120,8 +120,8 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
           postagePaid.style.paddingBottom = "1rem"
           postagePaid.style.fontSize = "17px"
           
-   postagePaid.style.setProperty('font-family', "'Segoe UI Light', 'Helvetica Neue', Arial, sans-serif", 'important');
-        postagePaid.style.setProperty('font-weight', '350', 'important');          postagePaid.style.color = "#555"
+  //  postagePaid.style.setProperty('font-family', "'Segoe UI Light', 'Helvetica Neue', Arial, sans-serif", 'important');
+  //       postagePaid.style.setProperty('font-weight', '350', 'important');          postagePaid.style.color = "#555"
         }
       const toAddressBlock = clonedLabel.querySelector(".pdf-label-to-address") as HTMLElement
       if (toAddressBlock) {
@@ -132,7 +132,11 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
       }
       
       const senderAddressBlock = clonedLabel.querySelector(".pdf-label-sender-address") as HTMLElement
-      if (senderAddressBlock) senderAddressBlock.style.marginTop = "-.7rem"
+      if (senderAddressBlock) {
+        senderAddressBlock.style.marginTop = "-.7rem"
+       senderAddressBlock.style.fontWeight = "350"
+        senderAddressBlock.style.fontSize = "18px"
+      }
       
       const declarationBlock = clonedLabel.querySelector(".pdf-label-declaration") as HTMLElement
       if (declarationBlock) declarationBlock.style.marginTop = "-.3rem"
@@ -162,14 +166,14 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
       if (ownText) {
         ownText.style.fontWeight = "100"
         ownText.style.marginTop = "-10px"
-        ownText.style.color = "#444"
+        ownText.style.color = "#333"
         ownText.style.fontSize = "32px"
       }
       const cubicWeightText = clonedLabel.querySelector(".cubic-weight-text") as HTMLElement
       if (cubicWeightText) {
         cubicWeightText.style.fontWeight = "100"
         cubicWeightText.style.marginTop = "-10px"
-        cubicWeightText.style.color = "#444"
+        cubicWeightText.style.color = "#333"
         cubicWeightText.style.fontSize = "32px"
 
       }
@@ -177,29 +181,30 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
       if (weightText) {
         weightText.style.fontWeight = "100"
         weightText.style.marginTop = "-10px"
-        weightText.style.color = "#444"
+        weightText.style.color = "#333"
         weightText.style.fontSize = "32px"
 
       }
       const sender = clonedLabel.querySelector(".sender") as HTMLElement
       if (sender) {
-        sender.style.fontWeight = "300"
-     
+        // sender.style.fontWeight = "300"
+      sender.style.fontWeight = "350"
+        sender.style.fontSize = "18px"
 
       }
-      const aviationText = clonedLabel.querySelector(".Aviation-text") as HTMLElement
-      if (sender) {
-        aviationText.style.fontWeight = "100"
-        aviationText.style.fontWeight = "#333"
-     
+      const senderAddressElements1 = clonedLabel.querySelector(".sender-address-text-1") as HTMLElement
+      if (senderAddressElements1) {
+    
+     senderAddressElements1.style.fontWeight='350'
+          senderAddressElements1.style.fontSize='18px'
+
 
       }
       
      const senderAddressElements = clonedLabel.querySelectorAll(".sender-address-text");
 senderAddressElements.forEach((element) => {
-  element.style.fontWeight = "100";
-  element.style.color = "#333";
-  element.style.fontSize = "15px";
+  element.style.fontWeight = "350";
+  element.style.fontSize = "18px";
 });
 
       const pdfLabelPackagingSection = clonedLabel.querySelector(".pdf-label-packaging-section") as HTMLElement
@@ -312,17 +317,18 @@ senderAddressElements.forEach((element) => {
                     background: "#DC2626",
                     display: "flex",
                     alignItems: "center",
-                    justifyContent: "center",
+                    justifyContent: "center"
+                    , borderRadius: "3px" 
                   }}
                 >
-                  <div className="p-2.5">
-                    <img
-                      className="w-10 h-10"
-                      src="https://ik.imagekit.io/132dqaa7qx/logo.png?updatedAt=1748926741001"
-                      alt="Express Post Logo"
-                      style={{ objectFit: "contain" }}
-                    />
-                  </div>
+                  <div className="p-2.5 ">
+  <img
+    className="w-10 h-10"
+    src="https://ik.imagekit.io/132dqaa7qx/logo.png?updatedAt=1748926741001"
+    alt="Express Post Logo"
+    style={{ objectFit: "contain"}}
+  />
+</div>
                 </div>
 
                 {/* 2. New container for the yellow bar and text */}
@@ -379,22 +385,22 @@ senderAddressElements.forEach((element) => {
                   <div style={{ display: "flex", border: "4px solid #E8DFD2", borderBottom: "none", lineHeight: 1.2 }}>
                     <div  style={{ flex: 1, padding: "2px", borderRight: "4px solid #E8DFD2" }}>
                         <div className="pdf-label-packaging-section">
-                             <div style={{ fontSize: "16px", color: "#666", marginBottom: "4px" }}>Packaging</div>
+                             <div style={{ fontSize: "16px", color: "#444", marginBottom: "4px" }}>Packaging</div>
                       <div style={{ fontSize: "34px", textAlign: "center",fontWeight: "200"  ,color:'#444' }} className={`${Stratum.className} own-text`}>OWN</div>
                         </div>
                     </div>
                     <div  style={{ flex: 1, padding: "2px 0", textAlign: "center", borderRight: "4px solid #E8DFD2" }}>
                       <div className="pdf-label-weight-section">
-                        <div style={{ fontSize: "16px", color: "#666", marginBottom: "6px" }}>Physical weight</div>
+                        <div style={{ fontSize: "16px", color: "#444", marginBottom: "6px" }}>Physical weight</div>
                       <div style={{ fontSize: "34px", marginBottom: "4px", lineHeight: 1.2 ,color:'#444' }} className={`${Stratum.className} weight-text`}>{labelData.weight || "5kg"}</div>
-                      <div style={{ fontSize: "16px", color: "#666", margin: "8px 0" }}>Cubic weight</div>
+                      <div style={{ fontSize: "16px", color: "#444", margin: "8px 0" }}>Cubic weight</div>
                       <div style={{ fontSize: "34px", marginBottom: "8px" ,marginTop:'-4px',fontWeight: "200" ,color:'#444'}} className={`${Stratum.className} cubic-weight-text`}>N/A</div>
                       </div>
                     </div>
                     <div  style={{ flex: 1, padding: "2px 0", textAlign: "center", lineHeight: 1.2 }}>
                       <div className="pdf-label-features-section">
-                        <div style={{ fontSize: "16px", color: "#666", marginBottom: "4px" }}>Delivery features</div>
-                      <div style={{ fontSize: "26px" }}>-</div>
+                        <div style={{ fontSize: "16px", color: "#444", marginBottom: "4px" }}>Delivery features</div>
+                      <div style={{ fontSize: "26px" }}></div>
                       </div>
                     </div>
                   </div>
@@ -416,11 +422,12 @@ senderAddressElements.forEach((element) => {
                   {/* Sender Address */}
                   <div className="pdf-label-sender-address-container" style={{ border: "4px solid #E8DFD2" }}>
                     <div  style={{ height: "130px", padding: "4px", background: "white" }}>
-                     <div className="pdf-label-sender-address">
-                       <div style={{ fontSize: "20px", lineHeight: 1.2, fontWeight: "550", }}  className='sender'>Sender:</div>
-                      <div style={{ fontSize: "17px", lineHeight: 1.2 }} className="sender-address-text">{labelData.fromAddress.fullName}</div>
-                      <div style={{ fontSize: "17px", lineHeight: 1.2 }} className="sender-address-text">{labelData.fromAddress.street}</div>
-                      <div style={{ fontSize: "17px", lineHeight: 1.2 }} className="sender-address-text">{labelData.fromAddress.cityStatePostcode}</div>
+                     <div className="pdf-label-sender-address ">
+                       <div style={{ fontSize: "19px", lineHeight: 1.2 ,fontWeight: "350" }}  className='sender'>Sender:  <br />
+                     {labelData.fromAddress.fullName} <br />
+                  {labelData.fromAddress.street}<br />
+                      {labelData.fromAddress.cityStatePostcode} <br />
+                      </div>
                      </div>
                     </div>
                   </div>
@@ -432,7 +439,7 @@ senderAddressElements.forEach((element) => {
                   <div                     className="pdf-label-declaration"
 >
                       <div style={{ fontWeight: "bold", fontSize: "14px" }}>Aviation Security and Dangerous Goods Declaration</div>
-                    <div style={{ fontSize: "15px", lineHeight: "1.2", color: "#666", marginTop: "13px", textAlign: "justify" }} className="Aviation-text">
+                    <div style={{ fontSize: "15px", lineHeight: "1.2", color: "", marginTop: "13px", textAlign: "justify" }} className="Aviation-text">
                       The sender acknowledges that this article may be carried by air and will be subject to aviation security and clearing procedures; and the sender declares that the article does not contain any dangerous or prohibited goods, explosive or incendiary devices. A false declaration is a criminal offence.
                     </div>
                   </div>
@@ -458,7 +465,7 @@ senderAddressElements.forEach((element) => {
                       style={{
                         position: "absolute",
                         right: "-2px",
-                        top: "12%",
+                        top: "35%",
                         transform: "translateY(50%) rotate(90deg)",
                         transformOrigin: "center",
                         fontSize: "16px",
