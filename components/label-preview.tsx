@@ -108,7 +108,6 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
       clonedLabel.style.boxShadow = "none"
       clonedLabel.classList.remove("animate-slide-up")
       
-      // Select the new yellow bar to ensure its background renders correctly in the PDF
       const yellowBar = clonedLabel.querySelector(".pdf-label-header-yellow-bar") as HTMLElement;
       if (yellowBar) yellowBar.style.backgroundColor = "#FAD022";
 
@@ -119,9 +118,7 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
           postagePaid.style.marginTop = "-1.2rem"
           postagePaid.style.paddingBottom = "1rem"
           postagePaid.style.fontSize = "17px"
-          
-  //  postagePaid.style.setProperty('font-family', "'Segoe UI Light', 'Helvetica Neue', Arial, sans-serif", 'important');
-  //       postagePaid.style.setProperty('font-weight', '350', 'important');          postagePaid.style.color = "#555"
+          postagePaid.style.color = "#555"
         }
       const toAddressBlock = clonedLabel.querySelector(".pdf-label-to-address") as HTMLElement
       if (toAddressBlock) {
@@ -187,7 +184,6 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
       }
       const sender = clonedLabel.querySelector(".sender") as HTMLElement
       if (sender) {
-        // sender.style.fontWeight = "300"
       sender.style.fontWeight = "350"
         sender.style.fontSize = "18px"
 
@@ -202,7 +198,7 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
       }
       
      const senderAddressElements = clonedLabel.querySelectorAll(".sender-address-text");
-senderAddressElements.forEach((element) => {
+senderAddressElements.forEach((element: any) => {
   element.style.fontWeight = "350";
   element.style.fontSize = "18px";
 });
@@ -299,17 +295,15 @@ senderAddressElements.forEach((element) => {
               style={{ fontFamily: "Arial, sans-serif", backgroundColor: "#ffffff" }}
             >
               {/* --- HEADER --- */}
-              {/* --- CORRECTED HEADER STRUCTURE --- */}
               <div
                 className="pdf-label-header"
                 style={{
                   display: "flex",
-                  alignItems: "stretch", // Ensures both boxes are same height
+                  alignItems: "stretch", 
                   borderBottom: "none",
                   width:'580px'
                 }}
               >
-                {/* 1. Red logo box - no margin needed */}
                 <div
                   className="pdf-label-logo-box"
                   style={{
@@ -322,25 +316,24 @@ senderAddressElements.forEach((element) => {
                   }}
                 >
                   <div className="p-2.5 ">
-  <img
-    className="w-10 h-10"
-    src="https://ik.imagekit.io/132dqaa7qx/logo.png?updatedAt=1748926741001"
-    alt="Express Post Logo"
-    style={{ objectFit: "contain"}}
-  />
-</div>
+                    <img
+                      className="w-10 h-10"
+                      src="https://ik.imagekit.io/132dqaa7qx/logo.png?updatedAt=1748926741001"
+                      alt="Express Post Logo"
+                      style={{ objectFit: "contain"}}
+                    />
+                  </div>
                 </div>
 
-                {/* 2. New container for the yellow bar and text */}
                 <div
                   className="pdf-label-header-yellow-bar"
                   style={{
                     background: "#FAD022",
-                    flex: 1, // Takes up the rest of the space
-                    marginLeft: "4px", // This creates the visual gap
+                    flex: 1, 
+                    marginLeft: "4px", 
                     display: "flex",
                     alignItems: "center",
-                    paddingLeft: "1rem", // Space between yellow edge and text
+                    paddingLeft: "1rem", 
                   }}
                 >
                   <div
@@ -357,9 +350,7 @@ senderAddressElements.forEach((element) => {
                   </div>
                 </div>
               </div>
-              {/* --- END OF CORRECTED HEADER --- */}
-
-
+              
               <div className="main-content" style={{ display: "flex", backgroundColor: "#ffffff" }}>
                 {/* --- LEFT COLUMN --- */}
                 <div style={{ flex: 1, paddingTop: "6px" }}>
@@ -376,6 +367,13 @@ senderAddressElements.forEach((element) => {
                         To: <br />
                       {labelData.toAddress.fullName} <br />
                       {labelData.toAddress.street} <br />
+                      {/* ▼▼▼ NEWLY ADDED BLOCK ▼▼▼ */}
+                      {labelData.toAddress.street2 && (
+                        <>
+                          {labelData.toAddress.street2} <br />
+                        </>
+                      )}
+                      {/* ▲▲▲ END OF NEW BLOCK ▲▲▲ */}
                       {labelData.toAddress.cityStatePostcode}
                     </div>
                     </div>
@@ -424,9 +422,16 @@ senderAddressElements.forEach((element) => {
                     <div  style={{ height: "130px", padding: "4px", background: "white" }}>
                      <div className="pdf-label-sender-address ">
                        <div style={{ fontSize: "19px", lineHeight: 1.2 ,fontWeight: "350" }}  className='sender'>Sender:  <br />
-                     {labelData.fromAddress.fullName} <br />
-                  {labelData.fromAddress.street}<br />
-                      {labelData.fromAddress.cityStatePostcode} <br />
+                          {labelData.fromAddress.fullName} <br />
+                          {labelData.fromAddress.street}<br />
+                          {/* ▼▼▼ NEWLY ADDED BLOCK ▼▼▼ */}
+                          {labelData.fromAddress.street2 && (
+                            <>
+                              {labelData.fromAddress.street2}<br />
+                            </>
+                          )}
+                          {/* ▲▲▲ END OF NEW BLOCK ▲▲▲ */}
+                          {labelData.fromAddress.cityStatePostcode} <br />
                       </div>
                      </div>
                     </div>

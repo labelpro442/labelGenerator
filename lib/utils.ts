@@ -10,96 +10,35 @@ const australianStates = ["NSW", "VIC", "QLD", "SA", "WA", "TAS", "NT", "ACT"]
 
 // Random name generator
 const firstNames = [
-  "James",
-  "Robert",
-  "John",
-  "Michael",
-  "David",
-  "William",
-  "Richard",
-  "Joseph",
-  "Thomas",
-  "Charles",
-  "Mary",
-  "Patricia",
-  "Jennifer",
-  "Linda",
-  "Elizabeth",
-  "Barbara",
-  "Susan",
-  "Jessica",
-  "Sarah",
-  "Karen",
+  "James", "Robert", "John", "Michael", "David", "William", "Richard", "Joseph",
+  "Thomas", "Charles", "Mary", "Patricia", "Jennifer", "Linda", "Elizabeth",
+  "Barbara", "Susan", "Jessica", "Sarah", "Karen",
 ]
 
 const lastNames = [
-  "Smith",
-  "Johnson",
-  "Williams",
-  "Brown",
-  "Jones",
-  "Miller",
-  "Davis",
-  "Garcia",
-  "Rodriguez",
-  "Wilson",
-  "Martinez",
-  "Anderson",
-  "Taylor",
-  "Thomas",
-  "Hernandez",
-  "Moore",
-  "Martin",
-  "Jackson",
-  "Thompson",
-  "White",
+  "Smith", "Johnson", "Williams", "Brown", "Jones", "Miller", "Davis", "Garcia",
+  "Rodriguez", "Wilson", "Martinez", "Anderson", "Taylor", "Thomas", "Hernandez",
+  "Moore", "Martin", "Jackson", "Thompson", "White",
 ]
 
 // Random street names
 const streetNames = [
-  "High",
-  "Main",
-  "Church",
-  "Park",
-  "Mill",
-  "Station",
-  "Victoria",
-  "Green",
-  "Manor",
-  "Kings",
-  "Queens",
-  "New",
-  "George",
-  "York",
-  "Castle",
-  "North",
-  "South",
-  "East",
-  "West",
-  "School",
+  "High", "Main", "Church", "Park", "Mill", "Station", "Victoria", "Green",
+  "Manor", "Kings", "Queens", "New", "George", "York", "Castle", "North",
+  "South", "East", "West", "School",
 ]
 
 const streetTypes = ["Street", "Road", "Avenue", "Lane", "Drive", "Boulevard", "Way", "Place", "Court", "Terrace"]
 
 // Random city names (Australian cities)
 const cities = [
-  "Sydney",
-  "Melbourne",
-  "Brisbane",
-  "Perth",
-  "Adelaide",
-  "Gold Coast",
-  "Newcastle",
-  "Canberra",
-  "Wollongong",
-  "Hobart",
-  "Geelong",
-  "Townsville",
-  "Cairns",
-  "Darwin",
-  "Toowoomba",
-  "Ballarat",
+  "Sydney", "Melbourne", "Brisbane", "Perth", "Adelaide", "Gold Coast",
+  "Newcastle", "Canberra", "Wollongong", "Hobart", "Geelong", "Townsville",
+  "Cairns", "Darwin", "Toowoomba", "Ballarat",
 ]
+
+// NEW: Constant for apartment/unit types
+const unitTypes = ["Apt", "Unit", "Suite", "Level"]
 
 // Random postcode generator (Australian format)
 function generateRandomPostcode(): string {
@@ -113,7 +52,7 @@ export function generateRandomPhone(): string {
   return `${prefix}${remainingDigits}`
 }
 
-// Generate a random address
+// Generate a random address (UPDATED)
 export function generateRandomAddress(preferredState?: string) {
   const firstName = firstNames[Math.floor(Math.random() * firstNames.length)]
   const lastName = lastNames[Math.floor(Math.random() * lastNames.length)]
@@ -124,9 +63,19 @@ export function generateRandomAddress(preferredState?: string) {
   const state = preferredState || australianStates[Math.floor(Math.random() * australianStates.length)]
   const postcode = generateRandomPostcode()
 
+  // Logic for optional street2
+  let street2 = ""
+  // Give it a 40% chance to generate a secondary address line
+  if (Math.random() < 0.4) {
+    const unitType = unitTypes[Math.floor(Math.random() * unitTypes.length)]
+    const unitNumber = Math.floor(1 + Math.random() * 150)
+    street2 = `${unitType} ${unitNumber}`
+  }
+
   return {
     fullName: `${firstName} ${lastName}`,
     street: `${streetNumber} ${streetName} ${streetType}`,
+    street2: street2, // <-- Added new field to the return object
     cityStatePostcode: `${city}, ${state} ${postcode}`,
   }
 }

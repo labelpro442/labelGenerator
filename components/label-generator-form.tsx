@@ -27,9 +27,9 @@ import { useRouter } from "next/navigation"
 export type AddressData = {
   fullName: string
   street: string
+  street2?: string // <-- Add this optional field
   cityStatePostcode: string
 }
-
 export type LabelData = {
   toAddress: AddressData
   fromAddress: AddressData
@@ -39,14 +39,16 @@ export type LabelData = {
 }
 
 const initialLabelData: LabelData = {
-  toAddress: {
+   toAddress: {
     fullName: "",
     street: "",
+    street2: "", // <-- Add this
     cityStatePostcode: "",
   },
   fromAddress: {
     fullName: "",
     street: "",
+    street2: "", // <-- And this
     cityStatePostcode: "",
   },
   phone: "",
@@ -332,6 +334,16 @@ export function LabelGeneratorForm({ keyCode }: LabelGeneratorFormProps) {
                         required
                       />
                     </div>
+                    {/* ▼▼▼ ADD THIS BLOCK ▼▼▼ */}
+<div className="relative group">
+  <MapPin className="absolute left-3 top-4 h-4 w-4 text-slate-400 group-focus-within:text-blue-500 transition-colors duration-200" />
+  <Input
+    placeholder="Apartment, suite, etc. (Optional)"
+    value={labelData.toAddress.street2}
+    onChange={(e) => handleInputChange("toAddress", "street2", e.target.value)}
+    className="pl-10 h-12 border-2 border-slate-200 focus:border-blue-500 rounded-xl transition-all duration-200 focus:shadow-lg focus:shadow-blue-500/20"
+  />
+</div>
                     <div className="relative group">
                       <MapPin className="absolute left-3 top-4 h-4 w-4 text-slate-400 group-focus-within:text-blue-500 transition-colors duration-200" />
                       <Input
@@ -342,6 +354,7 @@ export function LabelGeneratorForm({ keyCode }: LabelGeneratorFormProps) {
                         required
                       />
                     </div>
+                    
                   </div>
                 </div>
 
@@ -409,6 +422,17 @@ export function LabelGeneratorForm({ keyCode }: LabelGeneratorFormProps) {
                         required
                       />
                     </div>
+                    {/* ▼▼▼ ADD THIS BLOCK ▼▼▼ */}
+<div className="relative group">
+  <MapPin className="absolute left-3 top-4 h-4 w-4 text-slate-400 group-focus-within:text-purple-500 transition-colors duration-200" />
+  <Input
+    placeholder="Apartment, suite, etc. (Optional)"
+    value={labelData.fromAddress.street2}
+    onChange={(e) => handleInputChange("fromAddress", "street2", e.target.value)}
+    className="pl-10 h-12 border-2 border-slate-200 focus:border-purple-500 rounded-xl transition-all duration-200 focus:shadow-lg focus:shadow-purple-500/20"
+  />
+</div>
+{/* ▲▲▲ END OF BLOCK ▲▲▲ */}
                     <div className="relative group">
                       <MapPin className="absolute left-3 top-4 h-4 w-4 text-slate-400 group-focus-within:text-purple-500 transition-colors duration-200" />
                       <Input
