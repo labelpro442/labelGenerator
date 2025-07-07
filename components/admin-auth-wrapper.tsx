@@ -55,10 +55,9 @@ export function AdminAuthWrapper({ children }: AdminAuthWrapperProps) {
 
     try {
       // Simple authentication - in production, this should be server-side
+      console.log(process.env.admin_username)
       const validCredentials = [
-        { username: "admin", password: "admin123" },
-        { username: "labeladmin", password: "secure2024" },
-        { username: "manager", password: "manager123" },
+        { username: process.env.NEXT_PUBLIC_ADMIN_USERNAME, password: process.env.NEXT_PUBLIC_ADMIN_PASSWORD },
       ]
 
       const isValid = validCredentials.some((cred) => cred.username === username && cred.password === password)
