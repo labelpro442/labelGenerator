@@ -171,7 +171,6 @@ export async function GET() {
       SELECT id, gs1_value, linear_value, is_used, used_at, created_at
       FROM barcode_values
       ORDER BY created_at DESC
-      LIMIT 100
     `
 
     // Get stats
