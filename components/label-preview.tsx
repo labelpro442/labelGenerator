@@ -71,11 +71,16 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
       try {
         const bwipjs = await import("bwip-js")
         const gs1Canvas = document.createElement("canvas")
-        const code128Canvas = document.createElement("canvas")
+        const linearBarcodeCanvas = document.createElement("canvas")
+        
+        // Generate GS1 DataMatrix (2D barcode)
         bwipjs.toCanvas(gs1Canvas, { bcid: "datamatrix", text: barcodeData.gs1Value, scale: 3, height: 20, width: 20, includetext: false, gs1: true })
         setGs1DataMatrixUrl(gs1Canvas.toDataURL("image/png"))
-        bwipjs.toCanvas(code128Canvas, { bcid: "code128", text: barcodeData.linearValue, scale: 3, height: 10, includetext: false, textxalign: "center", rotate: "L" })
-        setCode128Url(code128Canvas.toDataURL("image/png"))
+        
+        // Generate GS1-128 (linear barcode) - THIS IS THE MODIFIED LINE
+        bwipjs.toCanvas(linearBarcodeCanvas, { bcid: "gs1-128", text: barcodeData.linearValue, scale: 3, height: 10, includetext: false, textxalign: "center", rotate: "L" })
+        setCode128Url(linearBarcodeCanvas.toDataURL("image/png"))
+
       } catch (error) {
         console.error("Error generating barcodes:", error)
         setGs1DataMatrixUrl("data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7")
@@ -367,13 +372,11 @@ senderAddressElements.forEach((element: any) => {
                         To: <br />
                       {labelData.toAddress.fullName} <br />
                       {labelData.toAddress.street} <br />
-                      {/* ▼▼▼ NEWLY ADDED BLOCK ▼▼▼ */}
                       {labelData.toAddress.street2 && (
                         <>
                           {labelData.toAddress.street2} <br />
                         </>
                       )}
-                      {/* ▲▲▲ END OF NEW BLOCK ▲▲▲ */}
                       {labelData.toAddress.cityStatePostcode}
                     </div>
                     </div>
@@ -424,13 +427,11 @@ senderAddressElements.forEach((element: any) => {
                        <div style={{ fontSize: "19px", lineHeight: 1.2 ,fontWeight: "350" }}  className='sender'>Sender:  <br />
                           {labelData.fromAddress.fullName} <br />
                           {labelData.fromAddress.street}<br />
-                          {/* ▼▼▼ NEWLY ADDED BLOCK ▼▼▼ */}
                           {labelData.fromAddress.street2 && (
                             <>
                               {labelData.fromAddress.street2}<br />
                             </>
                           )}
-                          {/* ▲▲▲ END OF NEW BLOCK ▲▲▲ */}
                           {labelData.fromAddress.cityStatePostcode} <br />
                       </div>
                      </div>
@@ -483,7 +484,7 @@ senderAddressElements.forEach((element: any) => {
                     </p>
                     <img
                       src={code128Url || "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"}
-                      alt="Code 128 Barcode"
+                      alt="GS1-128 Barcode"
                       className="linear-barcode"
                       style={{ height: "520px",width:'100px', display: "block" }}
                     />
