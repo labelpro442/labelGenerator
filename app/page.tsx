@@ -80,7 +80,9 @@ export default async function Home({ searchParams }: PageProps) {
                   <span className="font-semibold">Access Granted! Ready to generate labels</span>
                 </div>
               </div>
-              <LabelGeneratorForm keyCode={keyCode} />
+              {/* ▼▼▼ MODIFIED LINE ▼▼▼ */}
+              <LabelGeneratorForm keyCode={keyCode!} keyDetails={keyInfo!} />
+              {/* ▲▲▲ END OF MODIFICATION ▲▲▲ */}
             </div>
           ) : (
             <div>

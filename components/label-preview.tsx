@@ -24,6 +24,8 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
   const [gs1DataMatrixUrl, setGs1DataMatrixUrl] = useState<string>("")
   const [code128Url, setCode128Url] = useState<string>("")
   const [barcodeData, setBarcodeData] = useState<{ gs1Value: string; linearValue: string; id?: number } | null>(null)
+  // ▼▼▼ NEW STATE TO HOLD THE TRUNCATED VALUE ▼▼▼
+  const [articleIdValue, setArticleIdValue] = useState<string>("")
   const [isLoadingBarcode, setIsLoadingBarcode] = useState(true)
   const [hasError, setHasError] = useState(false)
   const { toast } = useToast()
@@ -71,16 +73,34 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
       try {
         const bwipjs = await import("bwip-js")
         const gs1Canvas = document.createElement("canvas")
-        const linearBarcodeCanvas = document.createElement("canvas")
-        
-        // Generate GS1 DataMatrix (2D barcode)
-        bwipjs.toCanvas(gs1Canvas, { bcid: "datamatrix", text: barcodeData.gs1Value, scale: 3, height: 20, width: 20, includetext: false, gs1: true })
-        setGs1DataMatrixUrl(gs1Canvas.toDataURL("image/png"))
-        
-        // Generate GS1-128 (linear barcode) - THIS IS THE MODIFIED LINE
-        bwipjs.toCanvas(linearBarcodeCanvas, { bcid: "gs1-128", text: barcodeData.linearValue, scale: 3, height: 10, includetext: false, textxalign: "center", rotate: "L" })
-        setCode128Url(linearBarcodeCanvas.toDataURL("image/png"))
+        const code128Canvas = document.createElement("canvas")
 
+        // ▼▼▼ THIS BLOCK IS MODIFIED AS PER YOUR REQUEST ▼▼▼
+        
+        // 1. Get the full GS1 value for the DataMatrix barcode
+        const fullGs1Value = barcodeData.gs1Value;
+        
+        // 2. Create the truncated value for the linear barcode by splitting at (8008)
+        const truncatedLinearValue = fullGs1Value.split("(8008)")[0];
+        setArticleIdValue(truncatedLinearValue); // Save for display on the label
+
+        // Generate GS1 DataMatrix (2D barcode) - uses the full value
+        bwipjs.toCanvas(gs1Canvas, { bcid: "datamatrix", text: fullGs1Value, scale: 3, height: 20, width: 20, includetext: false, gs1: true })
+        setGs1DataMatrixUrl(gs1Canvas.toDataURL("image/png"))
+
+        // Generate GS1-128 (linear barcode) - uses the TRUNCATED value
+        bwipjs.toCanvas(code128Canvas, { 
+            bcid: "gs1-128",
+            text: truncatedLinearValue, // Use the new truncated value here
+            scale: 3, 
+            height: 10, 
+            includetext: false, 
+            textxalign: "center", 
+            rotate: "L" 
+        })
+        // ▲▲▲ END OF MODIFICATION ▲▲▲
+        
+        setCode128Url(code128Canvas.toDataURL("image/png"))
       } catch (error) {
         console.error("Error generating barcodes:", error)
         setGs1DataMatrixUrl("data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7")
@@ -215,7 +235,7 @@ senderAddressElements.forEach((element: any) => {
       if (pdfLabelFeaturesSection) pdfLabelFeaturesSection.style.marginTop = "-.5rem"
       
       const articleIdText = clonedLabel.querySelector(".pdf-label-article-id") as HTMLElement
-      if (articleIdText) articleIdText.style.right = "-8px"
+      if (articleIdText) articleIdText.style.right = "-88px"
       
       const gs1Img = clonedLabel.querySelector(".datamatrix-code") as HTMLImageElement
       if (gs1Img && gs1DataMatrixUrl) gs1Img.src = gs1DataMatrixUrl
@@ -467,11 +487,12 @@ senderAddressElements.forEach((element: any) => {
                   </div>
 
                   <div style={{ padding: "2px", flex: 1, position: "relative", minHeight: "600px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                    {/* ▼▼▼ UPDATED TO SHOW THE CORRECT, TRUNCATED VALUE ▼▼▼ */}
                     <p
                       style={{
                         position: "absolute",
-                        right: "-2px",
-                        top: "35%",
+                        right: "-81px",
+                        top: "30%",
                         transform: "translateY(50%) rotate(90deg)",
                         transformOrigin: "center",
                         fontSize: "16px",
@@ -480,8 +501,9 @@ senderAddressElements.forEach((element: any) => {
                       }}
                       className={`${Stratum.className} pdf-label-article-id`}
                     >
-                      AP Article Id: {barcodeData?.linearValue || "ERROR"}
+                      AP Article Id: {articleIdValue || "ERROR"}
                     </p>
+                    {/* ▲▲▲ END OF UPDATE ▲▲▲ */}
                     <img
                       src={code128Url || "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"}
                       alt="GS1-128 Barcode"

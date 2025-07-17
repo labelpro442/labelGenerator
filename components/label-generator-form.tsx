@@ -27,7 +27,7 @@ import { useRouter } from "next/navigation"
 export type AddressData = {
   fullName: string
   street: string
-  street2?: string // <-- Add this optional field
+  street2?: string
   cityStatePostcode: string
 }
 export type LabelData = {
@@ -39,16 +39,16 @@ export type LabelData = {
 }
 
 const initialLabelData: LabelData = {
-   toAddress: {
+  toAddress: {
     fullName: "",
     street: "",
-    street2: "", // <-- Add this
+    street2: "",
     cityStatePostcode: "",
   },
   fromAddress: {
     fullName: "",
     street: "",
-    street2: "", // <-- And this
+    street2: "",
     cityStatePostcode: "",
   },
   phone: "",
@@ -56,11 +56,24 @@ const initialLabelData: LabelData = {
   weight: "5kg",
 }
 
+// ▼▼▼ ADDED TYPE DEFINITION ▼▼▼
+interface KeyDetails {
+  id: number
+  key_code: string
+  max_uses: number
+  current_uses: number
+  is_active: boolean
+}
+// ▲▲▲ END OF ADDITION ▲▲▲
+
+// ▼▼▼ MODIFIED PROPS INTERFACE ▼▼▼
 interface LabelGeneratorFormProps {
   keyCode: string
+  keyDetails: KeyDetails
 }
+// ▲▲▲ END OF MODIFICATION ▲▲▲
 
-export function LabelGeneratorForm({ keyCode }: LabelGeneratorFormProps) {
+export function LabelGeneratorForm({ keyCode, keyDetails }: LabelGeneratorFormProps) {
   const [labelData, setLabelData] = useState<LabelData>(initialLabelData)
   const [isGenerating, setIsGenerating] = useState(false)
   const [showPreview, setShowPreview] = useState(false)
@@ -225,15 +238,24 @@ export function LabelGeneratorForm({ keyCode }: LabelGeneratorFormProps) {
 
   return (
     <div className="space-y-8 animate-fade-in">
+      {/* ▼▼▼ MODIFIED THIS BLOCK ▼▼▼ */}
       <div className="flex justify-between items-center p-4 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20">
-        <div className="flex items-center gap-3">
-          <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-          <span className="text-sm text-slate-600 dark:text-slate-300">
-            Using key:{" "}
-            <span className="font-mono bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1 rounded-full text-xs">
-              {keyCode}
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+          <div className="flex items-center gap-3">
+            <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
+            <span className="text-sm text-slate-600 dark:text-slate-300">
+              Using key:{" "}
+              <span className="font-mono bg-gradient-to-r from-blue-500 to-purple-500 text-white px-3 py-1 rounded-full text-xs">
+                {keyCode}
+              </span>
             </span>
-          </span>
+          </div>
+          <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+            <Database className="h-4 w-4" />
+            <span>
+              Uses: {keyDetails.current_uses} / {keyDetails.max_uses}
+            </span>
+          </div>
         </div>
         <Button
           variant="outline"
@@ -244,6 +266,7 @@ export function LabelGeneratorForm({ keyCode }: LabelGeneratorFormProps) {
           Sign Out
         </Button>
       </div>
+      {/* ▲▲▲ END OF MODIFICATION ▲▲▲ */}
 
       {/* Barcode Status Warning */}
       {barcodeStatus && (
@@ -334,16 +357,15 @@ export function LabelGeneratorForm({ keyCode }: LabelGeneratorFormProps) {
                         required
                       />
                     </div>
-                    {/* ▼▼▼ ADD THIS BLOCK ▼▼▼ */}
-<div className="relative group">
-  <MapPin className="absolute left-3 top-4 h-4 w-4 text-slate-400 group-focus-within:text-blue-500 transition-colors duration-200" />
-  <Input
-    placeholder="Apartment, suite, etc. (Optional)"
-    value={labelData.toAddress.street2}
-    onChange={(e) => handleInputChange("toAddress", "street2", e.target.value)}
-    className="pl-10 h-12 border-2 border-slate-200 focus:border-blue-500 rounded-xl transition-all duration-200 focus:shadow-lg focus:shadow-blue-500/20"
-  />
-</div>
+                    <div className="relative group">
+                      <MapPin className="absolute left-3 top-4 h-4 w-4 text-slate-400 group-focus-within:text-blue-500 transition-colors duration-200" />
+                      <Input
+                        placeholder="Apartment, suite, etc. (Optional)"
+                        value={labelData.toAddress.street2}
+                        onChange={(e) => handleInputChange("toAddress", "street2", e.target.value)}
+                        className="pl-10 h-12 border-2 border-slate-200 focus:border-blue-500 rounded-xl transition-all duration-200 focus:shadow-lg focus:shadow-blue-500/20"
+                      />
+                    </div>
                     <div className="relative group">
                       <MapPin className="absolute left-3 top-4 h-4 w-4 text-slate-400 group-focus-within:text-blue-500 transition-colors duration-200" />
                       <Input
@@ -354,7 +376,6 @@ export function LabelGeneratorForm({ keyCode }: LabelGeneratorFormProps) {
                         required
                       />
                     </div>
-                    
                   </div>
                 </div>
 
@@ -422,17 +443,15 @@ export function LabelGeneratorForm({ keyCode }: LabelGeneratorFormProps) {
                         required
                       />
                     </div>
-                    {/* ▼▼▼ ADD THIS BLOCK ▼▼▼ */}
-<div className="relative group">
-  <MapPin className="absolute left-3 top-4 h-4 w-4 text-slate-400 group-focus-within:text-purple-500 transition-colors duration-200" />
-  <Input
-    placeholder="Apartment, suite, etc. (Optional)"
-    value={labelData.fromAddress.street2}
-    onChange={(e) => handleInputChange("fromAddress", "street2", e.target.value)}
-    className="pl-10 h-12 border-2 border-slate-200 focus:border-purple-500 rounded-xl transition-all duration-200 focus:shadow-lg focus:shadow-purple-500/20"
-  />
-</div>
-{/* ▲▲▲ END OF BLOCK ▲▲▲ */}
+                    <div className="relative group">
+                      <MapPin className="absolute left-3 top-4 h-4 w-4 text-slate-400 group-focus-within:text-purple-500 transition-colors duration-200" />
+                      <Input
+                        placeholder="Apartment, suite, etc. (Optional)"
+                        value={labelData.fromAddress.street2}
+                        onChange={(e) => handleInputChange("fromAddress", "street2", e.target.value)}
+                        className="pl-10 h-12 border-2 border-slate-200 focus:border-purple-500 rounded-xl transition-all duration-200 focus:shadow-lg focus:shadow-purple-500/20"
+                      />
+                    </div>
                     <div className="relative group">
                       <MapPin className="absolute left-3 top-4 h-4 w-4 text-slate-400 group-focus-within:text-purple-500 transition-colors duration-200" />
                       <Input
