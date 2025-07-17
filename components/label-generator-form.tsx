@@ -250,12 +250,30 @@ export function LabelGeneratorForm({ keyCode, keyDetails }: LabelGeneratorFormPr
               </span>
             </span>
           </div>
-          <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+          {/* <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
             <Database className="h-4 w-4" />
             <span>
               Uses: {keyDetails.current_uses} / {keyDetails.max_uses}
             </span>
-          </div>
+          </div> */}
+          <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+  <Database className="h-4 w-4" />
+  <span className="font-medium">
+    {keyDetails.current_uses} / {keyDetails.max_uses}
+  </span>
+  <div className="w-16 bg-slate-200 dark:bg-slate-600 rounded-full h-2 overflow-hidden">
+    <div
+      className={`h-full rounded-full transition-all duration-300 ${
+        keyDetails.current_uses >= keyDetails.max_uses
+          ? "bg-gradient-to-r from-red-500 to-pink-600"
+          : "bg-gradient-to-r from-blue-500 to-purple-600"
+      }`}
+      style={{
+        width: `${Math.min((keyDetails.current_uses / keyDetails.max_uses) * 100, 100)}%`,
+      }}
+    />
+  </div>
+</div>
         </div>
         <Button
           variant="outline"

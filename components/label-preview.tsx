@@ -24,8 +24,6 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
   const [gs1DataMatrixUrl, setGs1DataMatrixUrl] = useState<string>("")
   const [code128Url, setCode128Url] = useState<string>("")
   const [barcodeData, setBarcodeData] = useState<{ gs1Value: string; linearValue: string; id?: number } | null>(null)
-  // ▼▼▼ NEW STATE TO HOLD THE TRUNCATED VALUE ▼▼▼
-  const [articleIdValue, setArticleIdValue] = useState<string>("")
   const [isLoadingBarcode, setIsLoadingBarcode] = useState(true)
   const [hasError, setHasError] = useState(false)
   const { toast } = useToast()
@@ -74,15 +72,12 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
         const bwipjs = await import("bwip-js")
         const gs1Canvas = document.createElement("canvas")
         const code128Canvas = document.createElement("canvas")
-
-        // ▼▼▼ THIS BLOCK IS MODIFIED AS PER YOUR REQUEST ▼▼▼
         
-        // 1. Get the full GS1 value for the DataMatrix barcode
+        // Get the full GS1 value for the DataMatrix barcode
         const fullGs1Value = barcodeData.gs1Value;
         
-        // 2. Create the truncated value for the linear barcode by splitting at (8008)
+        // Create the truncated value for the linear barcode by splitting at (8008)
         const truncatedLinearValue = fullGs1Value.split("(8008)")[0];
-        setArticleIdValue(truncatedLinearValue); // Save for display on the label
 
         // Generate GS1 DataMatrix (2D barcode) - uses the full value
         bwipjs.toCanvas(gs1Canvas, { bcid: "datamatrix", text: fullGs1Value, scale: 3, height: 20, width: 20, includetext: false, gs1: true })
@@ -98,7 +93,6 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
             textxalign: "center", 
             rotate: "L" 
         })
-        // ▲▲▲ END OF MODIFICATION ▲▲▲
         
         setCode128Url(code128Canvas.toDataURL("image/png"))
       } catch (error) {
@@ -235,7 +229,7 @@ senderAddressElements.forEach((element: any) => {
       if (pdfLabelFeaturesSection) pdfLabelFeaturesSection.style.marginTop = "-.5rem"
       
       const articleIdText = clonedLabel.querySelector(".pdf-label-article-id") as HTMLElement
-      if (articleIdText) articleIdText.style.right = "-88px"
+      if (articleIdText) articleIdText.style.right = "-8px"
       
       const gs1Img = clonedLabel.querySelector(".datamatrix-code") as HTMLImageElement
       if (gs1Img && gs1DataMatrixUrl) gs1Img.src = gs1DataMatrixUrl
@@ -289,28 +283,36 @@ senderAddressElements.forEach((element: any) => {
   return (
     <div className="animate-fade-in">
       <Card className="shadow-2xl border-0 bg-white dark:bg-slate-800 backdrop-blur-none overflow-hidden">
-        <CardHeader className="text-center pb-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-slate-700 dark:to-slate-600">
-          <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mb-4 animate-pulse">
-            <Eye className="w-8 h-8 text-white" />
-          </div>
-          <CardTitle className="text-2xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent flex items-center justify-center gap-2">
-            <Sparkles className="w-6 h-6 text-blue-600" />
-            Your Generated Label
-          </CardTitle>
-          <p className="text-slate-600 dark:text-slate-300">Professional shipping label ready for use</p>
-          {barcodeData && !hasError && (
-            <div className="mt-2 space-y-1">
-              <div className="text-xs text-slate-500">Barcode ID: {barcodeData.id}</div>
-              <div className="text-xs text-slate-500">Linear Value: {barcodeData.linearValue}</div>
-            </div>
-          )}
-          {hasError && (
-            <div className="mt-2 flex items-center justify-center gap-2 text-red-600">
-              <AlertTriangle className="w-4 h-4" />
-              <span className="text-xs">Error: Failed to assign barcode</span>
-            </div>
-          )}
-        </CardHeader>
+   <CardHeader className="text-center pb-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-slate-700 dark:to-slate-600">
+  <div className="mx-auto w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center mb-4 animate-pulse">
+    <Eye className="w-8 h-8 text-white" />
+  </div>
+  <CardTitle className="text-2xl bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent flex items-center justify-center gap-2">
+    <Sparkles className="w-6 h-6 text-blue-600" />
+    Your Generated Label
+  </CardTitle>
+  <p className="text-slate-600 dark:text-slate-300">Professional shipping label ready for use</p>
+  
+  {barcodeData && !hasError && (
+    <div className="mt-4">
+      <a
+        href={`https://auspost.com.au/mypost/track/details/${barcodeData.linearValue}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-400"
+      >
+        Track Parcel on Australia Post
+      </a>
+    </div>
+  )}
+
+  {hasError && (
+    <div className="mt-2 flex items-center justify-center gap-2 text-red-600">
+      <AlertTriangle className="w-4 h-4" />
+      <span className="text-xs">Error: Failed to assign barcode</span>
+    </div>
+  )}
+</CardHeader>
 
         <CardContent className="p-8" style={{ backgroundColor: "#ffffff" }}>
           <div className="flex justify-center mb-6" style={{ backgroundColor: "#ffffff" }}>
@@ -487,12 +489,12 @@ senderAddressElements.forEach((element: any) => {
                   </div>
 
                   <div style={{ padding: "2px", flex: 1, position: "relative", minHeight: "600px", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-                    {/* ▼▼▼ UPDATED TO SHOW THE CORRECT, TRUNCATED VALUE ▼▼▼ */}
+                    {/* ▼▼▼ CORRECTED TO SHOW `barcodeData.linearValue` DIRECTLY ▼▼▼ */}
                     <p
                       style={{
                         position: "absolute",
-                        right: "-81px",
-                        top: "30%",
+                        right: "-1px",
+                        top: "18%",
                         transform: "translateY(50%) rotate(90deg)",
                         transformOrigin: "center",
                         fontSize: "16px",
@@ -501,9 +503,9 @@ senderAddressElements.forEach((element: any) => {
                       }}
                       className={`${Stratum.className} pdf-label-article-id`}
                     >
-                      AP Article Id: {articleIdValue || "ERROR"}
+                      AP Article Id: {barcodeData?.linearValue || "ERROR"}
                     </p>
-                    {/* ▲▲▲ END OF UPDATE */}
+                    {/* ▲▲▲ END OF CORRECTION ▲▲▲ */}
                     <img
                       src={code128Url || "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"}
                       alt="GS1-128 Barcode"
