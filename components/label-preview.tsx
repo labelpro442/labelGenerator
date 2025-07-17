@@ -503,7 +503,7 @@ senderAddressElements.forEach((element: any) => {
                     >
                       AP Article Id: {articleIdValue || "ERROR"}
                     </p>
-                    {/* ▲▲▲ END OF UPDATE ▲▲▲ */}
+                    {/* ▲▲▲ END OF UPDATE */}
                     <img
                       src={code128Url || "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"}
                       alt="GS1-128 Barcode"
