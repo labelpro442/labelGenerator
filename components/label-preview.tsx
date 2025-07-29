@@ -80,7 +80,9 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
         const truncatedLinearValue = fullGs1Value.split("(8008)")[0];
 
         // Generate GS1 DataMatrix (2D barcode) - uses the full value
-        bwipjs.toCanvas(gs1Canvas, { bcid: "datamatrix", text: fullGs1Value, scale: 3, height: 20, width: 20, includetext: false, gs1: true })
+        bwipjs.toCanvas(gs1Canvas, { bcid: "datamatrix", text: fullGs1Value, scale: 3, height: 20, width: 20, includetext: false,
+          //  gs1: true 
+          })
         setGs1DataMatrixUrl(gs1Canvas.toDataURL("image/png"))
 
         // Generate GS1-128 (linear barcode) - uses the TRUNCATED value
