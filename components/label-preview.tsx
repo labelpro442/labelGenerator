@@ -81,7 +81,7 @@ export function LabelPreview({ labelData, keyCode }: LabelPreviewProps) {
 
         // Generate GS1 DataMatrix (2D barcode) - uses the full value
         bwipjs.toCanvas(gs1Canvas, { bcid: "datamatrix", text: fullGs1Value, scale: 3, height: 20, width: 20, includetext: false,
-          //  gs1: true 
+           gs1: true 
           })
         setGs1DataMatrixUrl(gs1Canvas.toDataURL("image/png"))
 
